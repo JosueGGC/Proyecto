@@ -28,9 +28,9 @@ class MyAdapter(private val datos: Array<Array<String?>>, private val myListener
             tvValorDos = itemSensor.findViewById(R.id.tvValorDos)
             tvOpDos = itemSensor.findViewById(R.id.tvOpDos)
             tvFecha = itemSensor.findViewById(R.id.tvFecha)
-            bEdit = itemSensor.findViewById(R.id.bEdit)
+
             bDel = itemSensor.findViewById(R.id.bDel)
-            bEdit.setOnClickListener { myListener.onClickEdit(adapterPosition) }
+
             bDel.setOnClickListener { myListener.onClickDel(adapterPosition) }
         }
     }

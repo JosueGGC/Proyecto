@@ -24,12 +24,19 @@ class MainActivity2 : AppCompatActivity() {
 
     lateinit var sesion: SharedPreferences
 
+    lateinit var control: Button
+    lateinit var preguntas: Button
+    lateinit var bRefresh: Button
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main2)
         sesion = getSharedPreferences("sesion", 0)
 
 
+        control = findViewById(R.id.button2)
+        preguntas = findViewById(R.id.button3)
+        bRefresh = findViewById(R.id.button7)
         rvList = findViewById(R.id.rvList)
 
         rvList.setHasFixedSize(true)
@@ -37,12 +44,15 @@ class MainActivity2 : AppCompatActivity() {
         rvList.layoutManager = LinearLayoutManager(this)
 
         llenar()
+        control.setOnClickListener { startActivity(Intent(this, MainActivity3::class.java)) }
+        preguntas.setOnClickListener { startActivity(Intent(this, MainActivity4::class.java)) }
+        bRefresh.setOnClickListener { llenar() }
 
     }
 
 
     private fun llenar() {
-        val url = Uri.parse(Config.URL+"control")
+        val url = Uri.parse(Config.URL+"registro")
             .buildUpon()
             .build().toString()
         val peticion = object: JsonArrayRequest(Method.GET, url, null,
@@ -77,9 +87,6 @@ class MainActivity2 : AppCompatActivity() {
             lista[i][8] = res.getJSONObject(i).getString("fec_hora")
         }
         rvList.adapter = MyAdapter(lista, object : MyListener{
-            override fun onClickEdit(posicion: Int) {
-            }
-
             override fun onClickDel(posicion: Int) {
                 eliminar(lista[posicion][0]);
             }
@@ -87,17 +94,18 @@ class MainActivity2 : AppCompatActivity() {
     }
 
     private fun eliminar(id: String?) {
-        val url = Uri.parse(Config.URL+"control/"+id)
+        val url = Uri.parse(Config.URL+"registro/"+id)
             .buildUpon()
             .build().toString()
 
         val peticion = object: JsonObjectRequest(
             Request.Method.DELETE, url, null,
             {
-                Toast.makeText(this, "Registro eliminado", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Error en la peticion", Toast.LENGTH_SHORT).show()
             },
             {
-                Toast.makeText(this, "Error en la peticion", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Registro eliminado", Toast.LENGTH_SHORT).show()
+                llenar()
             }){
             override fun getHeaders(): MutableMap<String, String> {
                 val header: MutableMap<String, String> = HashMap()
